@@ -9,42 +9,56 @@ Currently, two official plugins are available:
 
 ## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-- Configure the top-level `parserOptions` property like this:
+1. Configure the top-level `parserOptions` property like this:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+    ```js
+    export default tseslint.config({
+      languageOptions: {
+        // other options...
+        parserOptions: {
+          project: ['./tsconfig.node.json', './tsconfig.app.json'],
+          tsconfigRootDir: import.meta.dirname,
+        },
+      },
+    })
+    ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. Replace `tseslint.configs.recommended` with `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+3. Optionally add `...tseslint.configs.stylisticTypeChecked`
+4. Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+    ```js
+    // eslint.config.js
+    import react from 'eslint-plugin-react'
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+    export default tseslint.config({
+      // Set the react version
+      settings: { react: { version: '18.3' } },
+      plugins: {
+        // Add the react plugin
+        react,
+      },
+      rules: {
+        // other rules...
+        // Enable its recommended rules
+        ...react.configs.recommended.rules,
+        ...react.configs['jsx-runtime'].rules,
+      },
+    })
+    ```
+
+## Setting up CI/CD
+
+To enable CI/CD for automatic deployment, add the following secrets in the GitHub Secrets settings of your repository or organization:
+
+- `DOCKER_USERNAME` – your Docker registry username
+- `DOCKER_PASSWORD` – your Docker registry password
+- `WATCHTOWER_HTTP_API_TOKEN` – the API token for secure Watchtower API access
+- `WATCHTOWER_UPDATE_ENDPOINT` – the endpoint for the Watchtower production update
+- `WATCHTOWER_UPDATE_ENDPOINT_DEV` – the endpoint for the Watchtower development update
+
+### Docker Image Naming
+
+The Docker image name is automatically set to the name of the repository. If the repository name changes, a new Docker image will be created in the Docker registry with the new name.
