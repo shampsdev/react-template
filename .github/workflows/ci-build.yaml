@@ -1,17 +1,13 @@
-name: CI
+name: ci-build
 
-on:
-  push:
-    branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main", "dev" ]
+on: 
+  workflow_call: {}
+  pull_request: 
+    branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-22.04
-
     steps:
       - uses: actions/checkout@v4
 
@@ -19,4 +15,4 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build docker image
-        run: docker compose build
+        run: docker buildx build --load --progress=plain .
